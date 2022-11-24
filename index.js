@@ -27,6 +27,9 @@ async function run() {
     const productsCollection = client
       .db("ResaleProducts")
       .collection("Products");
+    const bookingsCollection = client
+      .db("ResaleProducts")
+      .collection("bookings");
 
     //get category from db
     app.get("/categories", async (req, res) => {
@@ -35,7 +38,7 @@ async function run() {
       res.send(result);
     });
 
-    //get products from db
+    // get products from db
     app.get("/products", async (req, res) => {
       const query = {};
       const result = await productsCollection.find(query).toArray();
@@ -47,6 +50,13 @@ async function run() {
       const id = req.params.id;
       const query = { productId: id };
       const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //bookings
+    app.post("/bookings", async (req, res) => {
+      const booked = req.body;
+      const result = await bookingsCollection.insertOne(booked);
       res.send(result);
     });
   } finally {
