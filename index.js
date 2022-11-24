@@ -35,12 +35,12 @@ async function run() {
       res.send(result);
     });
 
-    //get products from db
-    app.get("/products", async (req, res) => {
-      const query = {};
-      const result = await productsCollection.find(query).toArray();
-      res.send(result);
-    });
+    // //get products from db
+    // app.get("/products", async (req, res) => {
+    //   const query = {};
+    //   const result = await productsCollection.find(query).toArray();
+    //   res.send(result);
+    // });
 
     //get products by id
     app.get("/products/:id", async (req, res) => {
