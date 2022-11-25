@@ -77,7 +77,6 @@ async function run() {
       const result = await addedProductsCollection.insertOne(added);
       res.send(result);
     });
-
     //get added product
     app.get("/addProduct", async (req, res) => {
       const email = req.query.email;
