@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -30,6 +30,9 @@ async function run() {
     const bookingsCollection = client
       .db("ResaleProducts")
       .collection("bookings");
+    const addedProductsCollection = client
+      .db("ResaleProducts")
+      .collection("addedProducts");
 
     //get category from db
     app.get("/categories", async (req, res) => {
@@ -59,6 +62,53 @@ async function run() {
       const result = await bookingsCollection.insertOne(booked);
       res.send(result);
     });
+
+    //get bookings by email
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //add product
+    app.post("/addProduct", async (req, res) => {
+      const added = req.body;
+      const result = await addedProductsCollection.insertOne(added);
+      res.send(result);
+    });
+
+    //get added product
+    app.get("/addProduct", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await addedProductsCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.delete("/addProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await addedProductsCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // //update products
+    // app.get("/updateProduct", async (req, res) => {
+    //   const query = {};
+    //   const option = { upsert: true };
+    //   const updatedDoc = {
+    //     $set: {
+    //       date: "Nov-25-22",
+    //     },
+    //   };
+    //   const result = await productsCollection.updateMany(
+    //     query,
+    //     updatedDoc,
+    //     option
+    //   );
+    //   console.log(result);
+    //   res.send(result);
+    // });
   } finally {
   }
 }
