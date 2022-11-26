@@ -43,6 +43,22 @@ async function run() {
     //usersCollection
     const usersCollection = client.db("ResaleProducts").collection("users");
 
+    //verify jwt
+    function verifyJWT(req, res, next) {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(403).send({ message: "Unauthorized access" });
+      }
+      const token = authHeader.split(" ")[1];
+      jwt.verify(token, process.env.USER_TOKEN, function (error, decoded) {
+        if (error) {
+          return res.status(401).send({ message: "forbidden access" });
+        }
+        req.decoded = decoded;
+        next();
+      });
+    }
+
     //set user to db
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -82,6 +98,10 @@ async function run() {
     //get bookings by email
     app.get("/bookings", async (req, res) => {
       const email = req.query.email;
+      // const decodedEmail = req.decoded.email;
+      // if (email !== decodedEmail) {
+      //   return res.status(403).send({ message: "Unauthorized access" });
+      // }
       const query = { email: email };
       const result = await bookingsCollection.find(query).toArray();
       res.send(result);
@@ -108,6 +128,20 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await addedProductsCollection.deleteOne(query);
       res.send(result);
+    });
+
+    //jwt token
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      if (user) {
+        const token = jwt.sign({ email }, process.env.USER_TOKEN, {
+          expiresIn: "1d",
+        });
+        return res.send({ accessToken: token });
+      }
+      res.status(403).send({ accessToken: "" });
     });
 
     // //update products
