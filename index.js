@@ -20,19 +20,35 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    //collections
+    //categoriesCollection
     const categoriesCollection = client
       .db("ResaleProducts")
       .collection("categories");
+
+    //productsCollection
     const productsCollection = client
       .db("ResaleProducts")
       .collection("Products");
+
+    //bookingsCollection
     const bookingsCollection = client
       .db("ResaleProducts")
       .collection("bookings");
+
+    //addedProductsCollection
     const addedProductsCollection = client
       .db("ResaleProducts")
       .collection("addedProducts");
+
+    //usersCollection
+    const usersCollection = client.db("ResaleProducts").collection("users");
+
+    //set user to db
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
 
     //get category from db
     app.get("/categories", async (req, res) => {
@@ -77,6 +93,7 @@ async function run() {
       const result = await addedProductsCollection.insertOne(added);
       res.send(result);
     });
+
     //get added product
     app.get("/addProduct", async (req, res) => {
       const email = req.query.email;
@@ -84,6 +101,8 @@ async function run() {
       const result = await addedProductsCollection.find(query).toArray();
       res.send(result);
     });
+
+    //delete booking product
     app.delete("/addProduct/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
