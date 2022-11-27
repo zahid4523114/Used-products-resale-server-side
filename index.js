@@ -80,10 +80,17 @@ async function run() {
       res.send(result);
     });
 
+    //added product to all product
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productsCollection.insertOne(product);
+      res.send(result);
+    });
+
     //get products by id
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { productId: id };
+      const query = { categoryName: id };
       const result = await productsCollection.find(query).toArray();
       res.send(result);
     });
@@ -150,10 +157,10 @@ async function run() {
     //   const option = { upsert: true };
     //   const updatedDoc = {
     //     $set: {
-    //       date: "Nov-25-22",
+    //       categoryName: "nikon",
     //     },
     //   };
-    //   const result = await productsCollection.updateMany(
+    //   const result = await categoriesCollection.updateMany(
     //     query,
     //     updatedDoc,
     //     option
