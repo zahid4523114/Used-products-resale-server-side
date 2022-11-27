@@ -43,6 +43,11 @@ async function run() {
     //usersCollection
     const usersCollection = client.db("ResaleProducts").collection("users");
 
+    //advertiseCollection
+    const advertiseCollection = client
+      .db("ResaleProducts")
+      .collection("advertise");
+
     //verify jwt
     function verifyJWT(req, res, next) {
       const authHeader = req.headers.authorization;
@@ -92,6 +97,28 @@ async function run() {
       const id = req.params.id;
       const query = { categoryName: id };
       const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //advertise product
+    app.get("/advertiseProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await addedProductsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //set advertise product
+    app.post("/setAdvertiseProduct", async (req, res) => {
+      const advertised = req.body;
+      const result = await advertiseCollection.insertOne(advertised);
+      res.send(result);
+    });
+
+    //set advertise product
+    app.get("/setAdvertiseProduct", async (req, res) => {
+      const query = {};
+      const result = await advertiseCollection.find(query).toArray();
       res.send(result);
     });
 
