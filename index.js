@@ -130,12 +130,12 @@ async function run() {
     });
 
     //get bookings by email
-    app.get("/bookings", async (req, res) => {
+    app.get("/bookings", verifyJWT, async (req, res) => {
       const email = req.query.email;
-      // const decodedEmail = req.decoded.email;
-      // if (email !== decodedEmail) {
-      //   return res.status(403).send({ message: "Unauthorized access" });
-      // }
+      const decodedEmail = req.decoded.email;
+      if (email !== decodedEmail) {
+        return res.status(403).send({ message: "Unauthorized access" });
+      }
       const query = { email: email };
       const result = await bookingsCollection.find(query).toArray();
       res.send(result);
