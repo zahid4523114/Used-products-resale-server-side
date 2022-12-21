@@ -178,7 +178,7 @@ async function run() {
       res.status(403).send({ accessToken: "" });
     });
 
-    // //update products
+    //update products
     // app.get("/updateProduct", async (req, res) => {
     //   const query = {};
     //   const option = { upsert: true };
